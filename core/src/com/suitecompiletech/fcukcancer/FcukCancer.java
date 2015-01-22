@@ -34,8 +34,8 @@ public class FcukCancer extends Game {
 
 	/** Music needs to be a class property to prevent being disposed. */
 	private Music music;
-	private FPSLogger fps;
-
+	private FPSLogger fps = new FPSLogger();
+	public static int maxOfHeightWidth;
 	private Controller controller;
 	private ControllerAdapter controllerListener = new ControllerAdapter(){
 		@Override
@@ -51,6 +51,7 @@ public class FcukCancer extends Game {
 			}
 		}
 	};
+
 
 	public Controller getController() {
 		return controller;
@@ -92,6 +93,11 @@ public class FcukCancer extends Game {
 
 	@Override
 	public void create () {
+		maxOfHeightWidth = Gdx.graphics.getHeight();
+		if (Gdx.graphics.getWidth() > maxOfHeightWidth) {
+			maxOfHeightWidth = Gdx.graphics.getWidth();
+		}
+		
 		Array<Controller> controllers = Controllers.getControllers();
 		if (controllers.size > 0) {
 			controller = controllers.first();
@@ -112,7 +118,6 @@ public class FcukCancer extends Game {
 			}
 		});
 
-		fps = new FPSLogger();
 	}
 
 	/** For this game each of our screens is an instance of InvadersScreen.

@@ -321,7 +321,7 @@ public class Simulation implements Disposable {
 			GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA), TextureAttribute.createDiffuse(explosionTexture)));
 
 		ship = new Ship(shipModel);
-		ship.transform.rotate(0, 1, 0, 180);
+		//ship.transform.rotate(0, 1, 0, 180);
 
 		for (int row = 0; row < 4; row++) {
 			for (int column = 0; column < 8; column++) {
@@ -340,11 +340,11 @@ public class Simulation implements Disposable {
 	}
 
 	public void update (float delta) {
-		ship.update(delta);
+		//ship.update(delta);
 		updateInvaders(delta);
 		updateShots(delta);
 		updateExplosions(delta);
-		checkShipCollision();
+		//checkShipCollision();
 		checkInvaderCollision();
 		checkBlockCollision();
 		checkNextLevel();
@@ -489,14 +489,21 @@ public class Simulation implements Disposable {
 	}
 
 	public void moveShipLeft (float delta, float scale) {
+		hero.pos.x += -delta * Hero.VELOCITY * scale;
+	}
+	
+	public void moveShipLeftOld (float delta, float scale) {
 		if (ship.isExploding) return;
 
 		ship.transform.trn(-delta * Ship.SHIP_VELOCITY * scale, 0, 0);
 		ship.transform.getTranslation(tmpV1);
 		if (tmpV1.x < PLAYFIELD_MIN_X) ship.transform.trn(PLAYFIELD_MIN_X - tmpV1.x, 0, 0);
 	}
-
 	public void moveShipRight (float delta, float scale) {
+		hero.pos.x -= -delta * Hero.VELOCITY * scale;
+	}
+
+	public void moveShipRightOld (float delta, float scale) {
 		if (ship.isExploding) return;
 
 		ship.transform.trn(+delta * Ship.SHIP_VELOCITY * scale, 0, 0);

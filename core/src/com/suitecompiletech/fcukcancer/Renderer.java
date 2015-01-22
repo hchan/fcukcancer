@@ -15,6 +15,7 @@ package com.suitecompiletech.fcukcancer;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Pixmap.Format;
@@ -28,6 +29,7 @@ import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
+import com.suitecompiletech.fcukcancer.simulation.Hero;
 import com.suitecompiletech.fcukcancer.simulation.Ship;
 import com.suitecompiletech.fcukcancer.simulation.Simulation;
 
@@ -197,6 +199,7 @@ public class Renderer {
 	}
 
 	public void render (Simulation simulation, float delta) {
+		
 		// We explicitly require GL10, otherwise we could've used the GLCommon
 		// interface via Gdx.gl
 		GL20 gl = Gdx.gl;
@@ -208,7 +211,7 @@ public class Renderer {
 
 		modelBatch.begin(camera);
 		modelBatch.render(simulation.explosions);
-		if (!simulation.ship.isExploding) modelBatch.render(simulation.ship, lights);
+		//if (!simulation.ship.isExploding) modelBatch.render(simulation.ship, lights);
 		modelBatch.render(simulation.invaders, lights);
 		modelBatch.render(simulation.blocks);
 		modelBatch.render(simulation.shots);
@@ -225,9 +228,10 @@ public class Renderer {
 			lastScore = simulation.score;
 			lastWave = simulation.wave;
 		}
-		spriteBatch.enableBlending();
+		//spriteBatch.enableBlending();
+		Hero hero = simulation.getHero();
+		spriteBatch.draw(hero.getTexture(), hero.pos.x, hero.pos.y, hero.width, hero.height);
 		
-		spriteBatch.draw(simulation.getHero().getTexture(), 0, 0, 100, 100);
 		
 		font.draw(spriteBatch, status, 0, 320);
 		spriteBatch.end();
@@ -237,19 +241,20 @@ public class Renderer {
 	}
 
 	private void renderBackground () {
-		viewMatrix.setToOrtho2D(0, 0, 400, 320);
+		//viewMatrix.setToOrtho2D(0, 0, 400, 320);
+		viewMatrix.setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		spriteBatch.setProjectionMatrix(viewMatrix);
 		spriteBatch.begin();
 		spriteBatch.disableBlending();
 		spriteBatch.setColor(Color.WHITE);
-		spriteBatch.draw(backgroundTexture, 0, 0, 480, 320, 0, 0, 512, 512, false, false);
+		//spriteBatch.draw(backgroundTexture, 0, 0, 480, 320, 0, 0, 512, 512, false, false);
 		spriteBatch.end();
 	}
 
 	final Vector3 dir = new Vector3();
 
 	private void setProjectionAndCamera (Ship ship) {
-		ship.transform.getTranslation(tmpV);
+		//ship.transform.getTranslation(tmpV);
 		camera.position.set(tmpV.x, 6, 2);
 		camera.direction.set(tmpV.x, 0, -4).sub(camera.position).nor();
 		camera.update();
