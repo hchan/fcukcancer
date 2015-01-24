@@ -13,6 +13,7 @@
 
 package com.suitecompiletech.fcukcancer;
 
+import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.FPSLogger;
@@ -29,7 +30,9 @@ import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
+import com.suitecompiletech.fcukcancer.simulation.ControlsHelper;
 import com.suitecompiletech.fcukcancer.simulation.Hero;
+import com.suitecompiletech.fcukcancer.simulation.Missle;
 import com.suitecompiletech.fcukcancer.simulation.Ship;
 import com.suitecompiletech.fcukcancer.simulation.Simulation;
 
@@ -213,8 +216,8 @@ public class Renderer {
 		modelBatch.render(simulation.explosions);
 		//if (!simulation.ship.isExploding) modelBatch.render(simulation.ship, lights);
 		modelBatch.render(simulation.invaders, lights);
-		modelBatch.render(simulation.blocks);
-		modelBatch.render(simulation.shots);
+		//modelBatch.render(simulation.blocks);
+		//modelBatch.render(simulation.shots);
 		modelBatch.end();
 
 		gl.glDisable(GL20.GL_CULL_FACE);
@@ -222,6 +225,12 @@ public class Renderer {
 
 		spriteBatch.setProjectionMatrix(viewMatrix);
 		spriteBatch.begin();
+		
+		for (Missle missle : simulation.missles) {
+			spriteBatch.draw(missle.animation.getKeyFrame(missle.stateTime, true), missle.pos.x, missle.pos.y, missle.width, missle.height);
+			
+		}
+		
 		if (simulation.ship.lives != lastLives || simulation.score != lastScore || simulation.wave != lastWave) {
 			status = "lives: " + simulation.ship.lives + " wave: " + simulation.wave + " score: " + simulation.score;
 			lastLives = simulation.ship.lives;
@@ -232,13 +241,23 @@ public class Renderer {
 		Hero hero = simulation.getHero();
 		spriteBatch.draw(hero.getTexture(), hero.pos.x, hero.pos.y, hero.width, hero.height);
 		
+		if (Gdx.app.getType() == ApplicationType.Android || Gdx.app.getType() != ApplicationType.iOS) {
+		
+			spriteBatch.draw(simulation.getLeft(), 0, 0, ControlsHelper.leftButtonWidth, ControlsHelper.leftButtonHeight);
+			spriteBatch.draw(simulation.getRight(), Gdx.graphics.getWidth()-ControlsHelper.rightButtonWidth, 0, ControlsHelper.rightButtonWidth, ControlsHelper.rightButtonHeight);
+			Gdx.app.log(this.getClass().getSimpleName(), "Rendercount:" + renderCount);
+		}
+		
 		
 		font.draw(spriteBatch, status, 0, 320);
 		spriteBatch.end();
 
 		invaderAngle += delta * 90;
 		if (invaderAngle > 360) invaderAngle -= 360;
+		renderCount++;
 	}
+	
+	private static int renderCount = 0;
 
 	private void renderBackground () {
 		//viewMatrix.setToOrtho2D(0, 0, 400, 320);

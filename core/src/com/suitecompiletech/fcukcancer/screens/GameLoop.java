@@ -20,6 +20,7 @@ import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerAdapter;
 import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.controllers.mappings.Ouya;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.suitecompiletech.fcukcancer.FcukCancer;
 import com.suitecompiletech.fcukcancer.Renderer;
 import com.suitecompiletech.fcukcancer.simulation.Simulation;
@@ -89,11 +90,11 @@ public class GameLoop extends InvadersScreen implements SimulationListener {
 	public void update (float delta) {
 		simulation.update(delta);
 
-		float accelerometerY = Gdx.input.getAccelerometerY();
-		if (accelerometerY < 0)
-			simulation.moveShipLeft(delta, Math.abs(accelerometerY) / 10);
-		else
-			simulation.moveShipRight(delta, Math.abs(accelerometerY) / 10);
+//		float accelerometerY = Gdx.input.getAccelerometerY();
+//		if (accelerometerY < 0)
+//			simulation.moveShipLeft(delta, Math.abs(accelerometerY) / 10);
+//		else
+//			simulation.moveShipRight(delta, Math.abs(accelerometerY) / 10);
 
 		if (invaders.getController() != null) {
 			if (buttonsPressed > 0) {

@@ -23,6 +23,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
@@ -39,10 +42,12 @@ public class Simulation implements Disposable {
 	public final static float PLAYFIELD_MAX_X = 14;
 	public final static float PLAYFIELD_MIN_Z = -15;
 	public final static float PLAYFIELD_MAX_Z = 2;
+	public static final float TIME_BETWEEN_MISSLE = 1.5f;
 
 	public ArrayList<Invader> invaders = new ArrayList<Invader>();
-	public ArrayList<Block> blocks = new ArrayList<Block>();
-	public ArrayList<Shot> shots = new ArrayList<Shot>();
+	//public ArrayList<Block> blocks = new ArrayList<Block>();
+	//public ArrayList<Shot> shots = new ArrayList<Shot>();
+	public ArrayList<Missle> missles = new ArrayList<Missle>();
 	public ArrayList<Explosion> explosions = new ArrayList<Explosion>();
 	
 	public Hero hero;
@@ -60,12 +65,15 @@ public class Simulation implements Disposable {
 	public Model shotModel;
 	public Model explosionModel;
 
-	private ArrayList<Shot> removedShots = new ArrayList<Shot>();
+	public ArrayList<Missle> removedMissles = new ArrayList<Missle>();
 	private ArrayList<Explosion> removedExplosions = new ArrayList<Explosion>();
 
 	private final Vector3 tmpV1 = new Vector3();
 	private final Vector3 tmpV2 = new Vector3();
 	private GameLoop gameLoop;
+	private Sprite left;
+	private Sprite right;
+	private Missle lastMissle;
 
 	public ArrayList<Invader> getInvaders() {
 		return invaders;
@@ -75,21 +83,9 @@ public class Simulation implements Disposable {
 		this.invaders = invaders;
 	}
 
-	public ArrayList<Block> getBlocks() {
-		return blocks;
-	}
 
-	public void setBlocks(ArrayList<Block> blocks) {
-		this.blocks = blocks;
-	}
 
-	public ArrayList<Shot> getShots() {
-		return shots;
-	}
-
-	public void setShots(ArrayList<Shot> shots) {
-		this.shots = shots;
-	}
+	
 
 	public ArrayList<Explosion> getExplosions() {
 		return explosions;
@@ -195,14 +191,6 @@ public class Simulation implements Disposable {
 		this.explosionModel = explosionModel;
 	}
 
-	public ArrayList<Shot> getRemovedShots() {
-		return removedShots;
-	}
-
-	public void setRemovedShots(ArrayList<Shot> removedShots) {
-		this.removedShots = removedShots;
-	}
-
 	public ArrayList<Explosion> getRemovedExplosions() {
 		return removedExplosions;
 	}
@@ -249,6 +237,13 @@ public class Simulation implements Disposable {
 	}
 
 	private void populate () {
+		
+			
+			left = ControlsHelper.getLeft();
+			right = ControlsHelper.getRight();
+		
+		
+		
 		hero = new Hero(this);
 		ObjLoader objLoader = new ObjLoader();
 		shipModel = objLoader.loadModel(Gdx.files.internal("data/ship.obj"));
@@ -330,24 +325,25 @@ public class Simulation implements Disposable {
 			}
 		}
 
-		for (int shield = 0; shield < 3; shield++) {
-			blocks.add(new Block(blockModel, -10 + shield * 10 - 1, 0, -2));
-			blocks.add(new Block(blockModel, -10 + shield * 10 - 1, 0, -3));
-			blocks.add(new Block(blockModel, -10 + shield * 10 + 0, 0, -3));
-			blocks.add(new Block(blockModel, -10 + shield * 10 + 1, 0, -3));
-			blocks.add(new Block(blockModel, -10 + shield * 10 + 1, 0, -2));
-		}
+//		for (int shield = 0; shield < 3; shield++) {
+//			blocks.add(new Block(blockModel, -10 + shield * 10 - 1, 0, -2));
+//			blocks.add(new Block(blockModel, -10 + shield * 10 - 1, 0, -3));
+//			blocks.add(new Block(blockModel, -10 + shield * 10 + 0, 0, -3));
+//			blocks.add(new Block(blockModel, -10 + shield * 10 + 1, 0, -3));
+//			blocks.add(new Block(blockModel, -10 + shield * 10 + 1, 0, -2));
+//		}
 	}
-
+	public float deltaSum = 0;
 	public void update (float delta) {
+		deltaSum += delta;
 		//ship.update(delta);
 		updateInvaders(delta);
-		updateShots(delta);
+		updateMissles(delta);
 		updateExplosions(delta);
 		//checkShipCollision();
 		checkInvaderCollision();
-		checkBlockCollision();
-		checkNextLevel();
+		//checkBlockCollision();
+		//checkNextLevel();
 	}
 
 	private void updateInvaders (float delta) {
@@ -357,26 +353,29 @@ public class Simulation implements Disposable {
 		}
 	}
 
-	private void updateShots (float delta) {
-		removedShots.clear();
-		for (int i = 0; i < shots.size(); i++) {
-			Shot shot = shots.get(i);
-			shot.update(delta);
-			if (shot.hasLeftField) removedShots.add(shot);
+	private void updateMissles (float delta) {
+		for (Missle missle : missles) {
+			missle.update(delta);
 		}
-
-		for (int i = 0; i < removedShots.size(); i++)
-			shots.remove(removedShots.get(i));
-
-		if (shipShot != null && shipShot.hasLeftField) shipShot = null;
-
-		if (Math.random() < 0.01 * multiplier && invaders.size() > 0) {
-			int index = (int)(Math.random() * (invaders.size() - 1));
-			invaders.get(index).transform.getTranslation(tmpV1);
-			Shot shot = new Shot(shotModel, tmpV1, true);
-			shots.add(shot);
-			if (listener != null) listener.shot();
-		}
+//		removedMissles.clear();
+//		for (int i = 0; i < missles.size(); i++) {
+//			Missle missle = missles.get(i);
+//			//missle.update(delta);
+//			//if (missle.hasLeftField) removedMissles.add(missle);
+//		}
+//
+//		for (int i = 0; i < removedMissles.size(); i++)
+//			shots.remove(removedMissles.get(i));
+//
+//		if (shipShot != null && shipShot.hasLeftField) shipShot = null;
+//
+//		if (Math.random() < 0.01 * multiplier && invaders.size() > 0) {
+//			int index = (int)(Math.random() * (invaders.size() - 1));
+//			invaders.get(index).transform.getTranslation(tmpV1);
+//			Shot shot = new Shot(shotModel, tmpV1, true);
+//			shots.add(shot);
+//			if (listener != null) listener.shot();
+//		}
 	}
 
 	public void updateExplosions (float delta) {
@@ -392,104 +391,107 @@ public class Simulation implements Disposable {
 	}
 
 	private void checkInvaderCollision () {
-		if (shipShot == null) return;
-
-		for (int j = 0; j < invaders.size(); j++) {
-			Invader invader = invaders.get(j);
-			invader.transform.getTranslation(tmpV1);
-			shipShot.transform.getTranslation(tmpV2);
-			if (tmpV1.dst(tmpV2) < Invader.INVADER_RADIUS) {
-				shots.remove(shipShot);
-				shipShot = null;
-				invaders.remove(invader);
-				explosions.add(new Explosion(explosionModel, tmpV1));
-				if (listener != null) listener.explosion();
-				score += Invader.INVADER_POINTS;
-				break;
-			}
-		}
+//		if (shipShot == null) return;
+//
+//		for (int j = 0; j < invaders.size(); j++) {
+//			Invader invader = invaders.get(j);
+//			invader.transform.getTranslation(tmpV1);
+//			shipShot.transform.getTranslation(tmpV2);
+//			if (tmpV1.dst(tmpV2) < Invader.INVADER_RADIUS) {
+//				shots.remove(shipShot);
+//				shipShot = null;
+//				invaders.remove(invader);
+//				explosions.add(new Explosion(explosionModel, tmpV1));
+//				if (listener != null) listener.explosion();
+//				score += Invader.INVADER_POINTS;
+//				break;
+//			}
+//		}
 	}
 
 	private void checkShipCollision () {
-		removedShots.clear();
-
-		if (!ship.isExploding) {
-			ship.transform.getTranslation(tmpV1);
-			for (int i = 0; i < shots.size(); i++) {
-				Shot shot = shots.get(i);
-				if (!shot.isInvaderShot) continue;
-				shot.transform.getTranslation(tmpV2);
-				if (tmpV1.dst(tmpV2) < Ship.SHIP_RADIUS) {
-					removedShots.add(shot);
-					shot.hasLeftField = true;
-					ship.lives--;
-					ship.isExploding = true;
-					explosions.add(new Explosion(explosionModel, tmpV1));
-					if (listener != null) listener.explosion();
-					break;
-				}
-			}
-
-			for (int i = 0; i < removedShots.size(); i++)
-				shots.remove(removedShots.get(i));
-		}
-
-		ship.transform.getTranslation(tmpV2);
-		for (int i = 0; i < invaders.size(); i++) {
-			Invader invader = invaders.get(i);
-			invader.transform.getTranslation(tmpV1);
-			if (tmpV1.dst(tmpV2) < Ship.SHIP_RADIUS) {
-				ship.lives--;
-				invaders.remove(invader);
-				ship.isExploding = true;
-				explosions.add(new Explosion(explosionModel, tmpV1));
-				explosions.add(new Explosion(explosionModel, tmpV2));
-				if (listener != null) listener.explosion();
-				break;
-			}
-		}
+//		removedMissles.clear();
+//
+//		if (!ship.isExploding) {
+//			ship.transform.getTranslation(tmpV1);
+//			for (int i = 0; i < shots.size(); i++) {
+//				Shot shot = shots.get(i);
+//				if (!shot.isInvaderShot) continue;
+//				shot.transform.getTranslation(tmpV2);
+//				if (tmpV1.dst(tmpV2) < Ship.SHIP_RADIUS) {
+//					removedMissles.add(shot);
+//					shot.hasLeftField = true;
+//					ship.lives--;
+//					ship.isExploding = true;
+//					explosions.add(new Explosion(explosionModel, tmpV1));
+//					if (listener != null) listener.explosion();
+//					break;
+//				}
+//			}
+//
+//			for (int i = 0; i < removedMissles.size(); i++)
+//				shots.remove(removedMissles.get(i));
+//		}
+//
+//		ship.transform.getTranslation(tmpV2);
+//		for (int i = 0; i < invaders.size(); i++) {
+//			Invader invader = invaders.get(i);
+//			invader.transform.getTranslation(tmpV1);
+//			if (tmpV1.dst(tmpV2) < Ship.SHIP_RADIUS) {
+//				ship.lives--;
+//				invaders.remove(invader);
+//				ship.isExploding = true;
+//				explosions.add(new Explosion(explosionModel, tmpV1));
+//				explosions.add(new Explosion(explosionModel, tmpV2));
+//				if (listener != null) listener.explosion();
+//				break;
+//			}
+//		}
 	}
 
-	private void checkBlockCollision () {
-		removedShots.clear();
+//	private void checkBlockCollision () {
+//		removedShots.clear();
+//
+//		for (int i = 0; i < shots.size(); i++) {
+//			Shot shot = shots.get(i);
+//			shot.transform.getTranslation(tmpV2);
+//
+//			for (int j = 0; j < blocks.size(); j++) {
+//				Block block = blocks.get(j);
+//				block.transform.getTranslation(tmpV1);
+//				if (tmpV1.dst(tmpV2) < Block.BLOCK_RADIUS) {
+//					removedShots.add(shot);
+//					shot.hasLeftField = true;
+//					blocks.remove(block);
+//					break;
+//				}
+//			}
+//		}
+//
+//		for (int i = 0; i < removedShots.size(); i++)
+//			shots.remove(removedShots.get(i));
+//	}
 
-		for (int i = 0; i < shots.size(); i++) {
-			Shot shot = shots.get(i);
-			shot.transform.getTranslation(tmpV2);
-
-			for (int j = 0; j < blocks.size(); j++) {
-				Block block = blocks.get(j);
-				block.transform.getTranslation(tmpV1);
-				if (tmpV1.dst(tmpV2) < Block.BLOCK_RADIUS) {
-					removedShots.add(shot);
-					shot.hasLeftField = true;
-					blocks.remove(block);
-					break;
-				}
-			}
-		}
-
-		for (int i = 0; i < removedShots.size(); i++)
-			shots.remove(removedShots.get(i));
-	}
-
-	private void checkNextLevel () {
-		if (invaders.size() == 0 && ship.lives > 0) {
-			blocks.clear();
-			shots.clear();
-			shipShot = null;
-			ship.transform.getTranslation(tmpV1);
-			int lives = ship.lives;
-			populate();
-			ship.transform.setTranslation(tmpV1);
-			ship.lives = lives;
-			multiplier += 0.2f;
-			wave++;
-		}
-	}
+//	private void checkNextLevel () {
+//		if (invaders.size() == 0 && ship.lives > 0) {
+//			blocks.clear();
+//			shots.clear();
+//			shipShot = null;
+//			ship.transform.getTranslation(tmpV1);
+//			int lives = ship.lives;
+//			populate();
+//			ship.transform.setTranslation(tmpV1);
+//			ship.lives = lives;
+//			multiplier += 0.2f;
+//			wave++;
+//		}
+//	}
 
 	public void moveShipLeft (float delta, float scale) {
-		hero.pos.x += -delta * Hero.VELOCITY * scale;
+		hero.pos.x -= delta * Hero.VELOCITY * scale;
+		if (hero.pos.x < 0) {
+			hero.pos.x = 0;
+		}
 	}
 	
 	public void moveShipLeftOld (float delta, float scale) {
@@ -500,7 +502,10 @@ public class Simulation implements Disposable {
 		if (tmpV1.x < PLAYFIELD_MIN_X) ship.transform.trn(PLAYFIELD_MIN_X - tmpV1.x, 0, 0);
 	}
 	public void moveShipRight (float delta, float scale) {
-		hero.pos.x -= -delta * Hero.VELOCITY * scale;
+		hero.pos.x += delta * Hero.VELOCITY * scale;
+		if (hero.pos.x >= Gdx.graphics.getWidth() - hero.width) {
+			hero.pos.x = Gdx.graphics.getWidth() - hero.width;
+		}
 	}
 
 	public void moveShipRightOld (float delta, float scale) {
@@ -512,12 +517,21 @@ public class Simulation implements Disposable {
 	}
 
 	public void shot () {
-		if (shipShot == null && !ship.isExploding) {
-			ship.transform.getTranslation(tmpV1);
-			shipShot = new Shot(shotModel, tmpV1, false);
-			shots.add(shipShot);
-			if (listener != null) listener.shot();
+//		if (shipShot == null && !ship.isExploding) {
+//			ship.transform.getTranslation(tmpV1);
+//			shipShot = new Shot(shotModel, tmpV1, false);
+//			shots.add(shipShot);
+//			if (listener != null) listener.shot();
+//		}
+		lastMissle = null;
+		try {
+			lastMissle = missles.get(missles.size()-1);
+		} catch (Exception e) {
 		}
+		if (lastMissle == null || (deltaSum - lastMissle.deltaTimeCreated) > TIME_BETWEEN_MISSLE) {
+			Missle missle = new Missle(this);
+			missles.add(missle);
+		} 
 	}
 
 	@Override
@@ -528,4 +542,25 @@ public class Simulation implements Disposable {
 		shotModel.dispose();
 		explosionModel.dispose();
 	}
+
+	
+
+
+	public Sprite getLeft() {
+		return left;
+	}
+
+	public void setLeft(Sprite left) {
+		this.left = left;
+	}
+
+	public Sprite getRight() {
+		return right;
+	}
+
+	public void setRight(Sprite right) {
+		this.right = right;
+	}
+
+
 }
