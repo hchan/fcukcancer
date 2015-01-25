@@ -1,16 +1,3 @@
-/*
- * Copyright 2010 Mario Zechner (contact@badlogicgames.com), Nathan Sweet (admin@esotericsoftware.com)
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the
- * License. You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS"
- * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language
- * governing permissions and limitations under the License.
- */
-
 package com.suitecompiletech.fcukcancer.simulation;
 
 import java.util.ArrayList;
@@ -44,9 +31,10 @@ public class Simulation implements Disposable {
 	public final static float PLAYFIELD_MAX_Z = 2;
 	public static final float TIME_BETWEEN_MISSLE = 1.5f;
 
-	public ArrayList<Invader> invaders = new ArrayList<Invader>();
+	//public ArrayList<Invader> invaders = new ArrayList<Invader>();
 	//public ArrayList<Block> blocks = new ArrayList<Block>();
 	//public ArrayList<Shot> shots = new ArrayList<Shot>();
+	public ArrayList<CancerCell> cancerCells = new ArrayList<CancerCell>();
 	public ArrayList<Missle> missles = new ArrayList<Missle>();
 	public ArrayList<Explosion> explosions = new ArrayList<Explosion>();
 	
@@ -75,16 +63,7 @@ public class Simulation implements Disposable {
 	private Sprite right;
 	private Missle lastMissle;
 
-	public ArrayList<Invader> getInvaders() {
-		return invaders;
-	}
-
-	public void setInvaders(ArrayList<Invader> invaders) {
-		this.invaders = invaders;
-	}
-
-
-
+	
 	
 
 	public ArrayList<Explosion> getExplosions() {
@@ -318,13 +297,22 @@ public class Simulation implements Disposable {
 		ship = new Ship(shipModel);
 		//ship.transform.rotate(0, 1, 0, 180);
 
-		for (int row = 0; row < 4; row++) {
-			for (int column = 0; column < 8; column++) {
-				Invader invader = new Invader(invaderModel, -PLAYFIELD_MAX_X / 2 + column * 2f, 0, PLAYFIELD_MIN_Z + row * 2f);
-				invaders.add(invader);
+//		for (int row = 0; row < 4; row++) {
+//			for (int column = 0; column < 8; column++) {
+//				Invader invader = new Invader(invaderModel, -PLAYFIELD_MAX_X / 2 + column * 2f, 0, PLAYFIELD_MIN_Z + row * 2f);
+//				invaders.add(invader);
+//			}
+//		}
+
+		for (int row = 0; row < 3; row++) {
+			for (int col = 0; col < 3; col++) {
+				CancerCell cancerCell = new CancerCell(this);
+				cancerCell.pos.x = col * cancerCell.width * 2;
+				cancerCell.pos.y = row * cancerCell.height * 2;
+				cancerCells.add(cancerCell);
 			}
 		}
-
+		
 //		for (int shield = 0; shield < 3; shield++) {
 //			blocks.add(new Block(blockModel, -10 + shield * 10 - 1, 0, -2));
 //			blocks.add(new Block(blockModel, -10 + shield * 10 - 1, 0, -3));
@@ -337,8 +325,9 @@ public class Simulation implements Disposable {
 	public void update (float delta) {
 		deltaSum += delta;
 		//ship.update(delta);
-		updateInvaders(delta);
+		//updateInvaders(delta);
 		updateMissles(delta);
+		updateCancerCells(delta);
 		updateExplosions(delta);
 		//checkShipCollision();
 		checkInvaderCollision();
@@ -346,13 +335,20 @@ public class Simulation implements Disposable {
 		//checkNextLevel();
 	}
 
-	private void updateInvaders (float delta) {
-		for (int i = 0; i < invaders.size(); i++) {
-			Invader invader = invaders.get(i);
-			invader.update(delta, multiplier);
+//	private void updateInvaders (float delta) {
+//		for (int i = 0; i < invaders.size(); i++) {
+//			Invader invader = invaders.get(i);
+//			invader.update(delta, multiplier);
+//		}
+//	}
+
+	
+	private void updateCancerCells(float delta) {
+		for (CancerCell cancerCell : cancerCells) {
+			cancerCell.update(delta);
 		}
 	}
-
+	
 	private void updateMissles (float delta) {
 		for (Missle missle : missles) {
 			missle.update(delta);

@@ -30,6 +30,7 @@ import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
+import com.suitecompiletech.fcukcancer.simulation.CancerCell;
 import com.suitecompiletech.fcukcancer.simulation.ControlsHelper;
 import com.suitecompiletech.fcukcancer.simulation.Hero;
 import com.suitecompiletech.fcukcancer.simulation.Missle;
@@ -215,7 +216,7 @@ public class Renderer {
 		modelBatch.begin(camera);
 		modelBatch.render(simulation.explosions);
 		//if (!simulation.ship.isExploding) modelBatch.render(simulation.ship, lights);
-		modelBatch.render(simulation.invaders, lights);
+		//modelBatch.render(simulation.invaders, lights);
 		//modelBatch.render(simulation.blocks);
 		//modelBatch.render(simulation.shots);
 		modelBatch.end();
@@ -228,6 +229,10 @@ public class Renderer {
 		
 		for (Missle missle : simulation.missles) {
 			spriteBatch.draw(missle.animation.getKeyFrame(missle.stateTime, true), missle.pos.x, missle.pos.y, missle.width, missle.height);
+			
+		}
+		for (CancerCell cancerCell : simulation.cancerCells) {
+			spriteBatch.draw(cancerCell.animation.getKeyFrame(cancerCell.stateTime, true), cancerCell.pos.x, cancerCell.pos.y, cancerCell.width, cancerCell.height);
 			
 		}
 		
