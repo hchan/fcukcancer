@@ -1,6 +1,7 @@
 package com.suitecompiletech.fcukcancer.simulation;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
@@ -20,6 +21,9 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.loader.ObjLoader;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Disposable;
 import com.suitecompiletech.fcukcancer.screens.GameLoop;
@@ -30,11 +34,13 @@ public class Simulation implements Disposable {
 	public final static float PLAYFIELD_MIN_Z = -15;
 	public final static float PLAYFIELD_MAX_Z = 2;
 	public static final float TIME_BETWEEN_MISSLE = 1.5f;
+	public static final int MAX_ROW = 3;
+	public static final int MAX_COL = 4;
 
 	//public ArrayList<Invader> invaders = new ArrayList<Invader>();
 	//public ArrayList<Block> blocks = new ArrayList<Block>();
 	//public ArrayList<Shot> shots = new ArrayList<Shot>();
-	public ArrayList<CancerCell> cancerCells = new ArrayList<CancerCell>();
+	public ArrayList<ArrayList<CancerCell>> cancerCells = new ArrayList<ArrayList<CancerCell>>();
 	public ArrayList<Missle> missles = new ArrayList<Missle>();
 	public ArrayList<Explosion> explosions = new ArrayList<Explosion>();
 	
@@ -53,7 +59,7 @@ public class Simulation implements Disposable {
 	public Model shotModel;
 	public Model explosionModel;
 
-	public ArrayList<Missle> removedMissles = new ArrayList<Missle>();
+	//public ArrayList<Missle> removedMissles = new ArrayList<Missle>();
 	private ArrayList<Explosion> removedExplosions = new ArrayList<Explosion>();
 
 	private final Vector3 tmpV1 = new Vector3();
@@ -304,12 +310,14 @@ public class Simulation implements Disposable {
 //			}
 //		}
 
-		for (int row = 0; row < 3; row++) {
-			for (int col = 0; col < 3; col++) {
+		for (int row = 0; row < MAX_ROW; row++) {
+			ArrayList<CancerCell> cancerCellRows = new ArrayList<CancerCell>();
+			cancerCells.add(cancerCellRows);
+			for (int col = 0; col < MAX_COL; col++) {
 				CancerCell cancerCell = new CancerCell(this);
 				cancerCell.pos.x = col * cancerCell.width * 2;
-				cancerCell.pos.y = row * cancerCell.height * 2;
-				cancerCells.add(cancerCell);
+				cancerCell.pos.y = Gdx.graphics.getHeight() - cancerCell.height - (row * cancerCell.height * 2);
+				cancerCellRows.add(cancerCell);
 			}
 		}
 		
@@ -330,7 +338,7 @@ public class Simulation implements Disposable {
 		updateCancerCells(delta);
 		updateExplosions(delta);
 		//checkShipCollision();
-		checkInvaderCollision();
+		checkMissleCollision();
 		//checkBlockCollision();
 		//checkNextLevel();
 	}
@@ -343,10 +351,80 @@ public class Simulation implements Disposable {
 //	}
 
 	
-	private void updateCancerCells(float delta) {
-		for (CancerCell cancerCell : cancerCells) {
-			cancerCell.update(delta);
+	private void checkMissleCollision() {
+        Iterator<Missle> misslesIterator = missles.iterator();
+		while (misslesIterator.hasNext()) {
+			boolean collision = false;
+			Missle missle = misslesIterator.next();
+			Rectangle rectMissle = new Rectangle(missle.pos.x, missle.pos.y, missle.width, missle.height);
+			
+			Iterator<ArrayList<CancerCell>> cancerCellsIterator = cancerCells.iterator();
+			
+			while (cancerCellsIterator.hasNext() && !collision) {
+				ArrayList<CancerCell> cancerCellRow = cancerCellsIterator.next();
+				
+				Iterator<CancerCell> cancerCellRowIterator = cancerCellRow.iterator();
+				while (cancerCellRowIterator.hasNext()) {
+					CancerCell cancerCell = cancerCellRowIterator.next();
+					Rectangle rectCancerCell = new Rectangle(cancerCell.pos.x, cancerCell.pos.y, cancerCell.width, cancerCell.height);
+					if (rectMissle.overlaps(rectCancerCell)) {
+						//Gdx.app.log(this.getClass().getSimpleName(), "missle hit!");
+						GameLoop.explosion.play();
+						collision = true;
+						cancerCellRowIterator.remove();
+						misslesIterator.remove();
+						break;
+					}
+				}
+				if (cancerCellRow.size() == 0) {
+					cancerCellsIterator.remove();
+				}
+			}
 		}
+	}
+	
+
+	private void updateCancerCells(float delta) {
+	
+		// change Direction?
+		for (int row = 0; row < cancerCells.size(); row++) {
+			ArrayList<CancerCell> cancerCellRow = cancerCells.get(row);
+			
+			CancerCell cancerCellRight = cancerCellRow.get(cancerCellRow.size() - 1);
+			if (cancerCellRight.directionX == 1) {
+				float newX = cancerCellRight.pos.x + CancerCell.VELOCITY;
+
+				if (newX + cancerCellRight.width > Gdx.graphics.getWidth()) {
+					for (int col = 0; col < cancerCellRow.size(); col++) {
+						CancerCell cancerCell = cancerCellRow.get(col);
+						cancerCell.directionX = -1;
+					}
+				}
+			}
+			CancerCell cancerCellLeft = cancerCellRow.get(0);
+			if (cancerCellLeft.directionX == -1) {
+				float newX = cancerCellLeft.pos.x - CancerCell.VELOCITY;
+
+				if (newX < 0) {
+					for (int col = 0; col < cancerCellRow.size(); col++) {
+						CancerCell cancerCell = cancerCellRow.get(col);
+						cancerCell.directionX = 1;
+					}
+				}
+			}
+		}
+		
+		
+		// move left or right
+		for (int row = 0; row < cancerCells.size(); row++) {
+			ArrayList<CancerCell> cancerCellRow = cancerCells.get(row);
+			for (int col = 0; col < cancerCellRow.size(); col++) {
+				CancerCell cancerCell = cancerCellRow.get(col);
+				cancerCell.update(delta);
+				cancerCell.pos.x = cancerCell.pos.x + (cancerCell.directionX * CancerCell.VELOCITY);
+			}
+		}
+		
 	}
 	
 	private void updateMissles (float delta) {
@@ -386,7 +464,7 @@ public class Simulation implements Disposable {
 			explosions.remove(removedExplosions.get(i));
 	}
 
-	private void checkInvaderCollision () {
+//	private void checkInvaderCollision () {
 //		if (shipShot == null) return;
 //
 //		for (int j = 0; j < invaders.size(); j++) {
@@ -403,7 +481,7 @@ public class Simulation implements Disposable {
 //				break;
 //			}
 //		}
-	}
+//	}
 
 	private void checkShipCollision () {
 //		removedMissles.clear();

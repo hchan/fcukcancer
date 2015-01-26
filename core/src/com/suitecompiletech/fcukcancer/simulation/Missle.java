@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.suitecompiletech.fcukcancer.FcukCancer;
 
 public class Missle {
-	public static final float VELOCITY = 100;
+	public static final float VELOCITY = 400;
 	public static final int HEIGHT_WIDTH_DIVISOR_TO_SCREEN = 20;
 	public Simulation simulation;
 	public Vector2 pos;
@@ -24,7 +24,7 @@ public class Missle {
 		deltaTimeCreated = simulation.deltaSum;
 		
 		pos = new Vector2();
-		width = FcukCancer.maxOfHeightWidth/HEIGHT_WIDTH_DIVISOR_TO_SCREEN;
+		width = FcukCancer.maxOfHeightWidth/HEIGHT_WIDTH_DIVISOR_TO_SCREEN/2;
 		height = FcukCancer.maxOfHeightWidth/HEIGHT_WIDTH_DIVISOR_TO_SCREEN;
 		pos.y = simulation.getHero().height;
 		pos.x = simulation.getHero().pos.x;

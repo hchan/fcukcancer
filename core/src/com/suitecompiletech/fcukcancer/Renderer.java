@@ -13,6 +13,8 @@
 
 package com.suitecompiletech.fcukcancer;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -231,9 +233,13 @@ public class Renderer {
 			spriteBatch.draw(missle.animation.getKeyFrame(missle.stateTime, true), missle.pos.x, missle.pos.y, missle.width, missle.height);
 			
 		}
-		for (CancerCell cancerCell : simulation.cancerCells) {
-			spriteBatch.draw(cancerCell.animation.getKeyFrame(cancerCell.stateTime, true), cancerCell.pos.x, cancerCell.pos.y, cancerCell.width, cancerCell.height);
-			
+		for (int row = 0; row < simulation.cancerCells.size(); row++) {
+			ArrayList<CancerCell> cancerCellRow = simulation.cancerCells.get(row);
+			for (int col = 0; col < cancerCellRow.size(); col++) {
+				CancerCell cancerCell = cancerCellRow.get(col);
+				float keyFrame = cancerCell.stateTime + cancerCell.randFloat;
+				spriteBatch.draw(cancerCell.animation.getKeyFrame(keyFrame, true), cancerCell.pos.x, cancerCell.pos.y, cancerCell.width, cancerCell.height);
+			}	
 		}
 		
 		if (simulation.ship.lives != lastLives || simulation.score != lastScore || simulation.wave != lastWave) {

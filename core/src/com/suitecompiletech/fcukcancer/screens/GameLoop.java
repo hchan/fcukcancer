@@ -32,7 +32,7 @@ public class GameLoop extends InvadersScreen implements SimulationListener {
 	/** the renderer **/
 	private final Renderer renderer;
 	/** explosion sound **/
-	private final Sound explosion;
+	public static Sound explosion;
 	/** shot sound **/
 	private final Sound shot;
 
