@@ -2,6 +2,7 @@
 package com.suitecompiletech.fcukcancer.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.controllers.Controller;
@@ -30,14 +31,14 @@ public class YouWin extends InvadersScreen {
 	private boolean isDone = false;
 	/** view & transform matrix **/
 	private final Matrix4 viewMatrix = new Matrix4();
-	private final Matrix4 transformMatrix = new Matrix4();
+	private final Music music;
 
 	public YouWin (FcukCancer invaders) {
 		super(invaders);
-		FcukCancer.music.stop();
-		FcukCancer.music = Gdx.audio.newMusic(Gdx.files.internal("youWin.mp3"));
-		FcukCancer.music.setVolume(FcukCancer.VOLUME);
-		FcukCancer.music.play();
+	
+		music = Gdx.audio.newMusic(Gdx.files.internal("youWin.mp3"));
+		music.setVolume(FcukCancer.VOLUME);
+		music.play();
 		
 		spriteBatch = new SpriteBatch();
 		background = new Texture(Gdx.files.internal("data/planet.jpg"));
@@ -63,16 +64,15 @@ public class YouWin extends InvadersScreen {
 
 	@Override
 	public void dispose () {
+		music.stop();
+		music.dispose();
 		spriteBatch.dispose();
 		background.dispose();
 		logo.dispose();
 		//font.dispose();
 	}
 
-	@Override
-	public boolean isDone () {
-		return isDone;
-	}
+	
 
 	@Override
 	public void draw (float delta) {
@@ -103,10 +103,10 @@ public class YouWin extends InvadersScreen {
 
 	@Override
 	public void update (float delta) {
-		if (Gdx.input.justTouched()) {
-			//isDone = true;
+		if (Gdx.input.justTouched() || Gdx.input.isKeyPressed(Keys.SPACE)) {
+			done = true;
 			this.dispose();
-			FcukCancer.INSTANCE.setScreen(new MainMenu(FcukCancer.INSTANCE) );
+			FcukCancer.INSTANCE.setScreen(new GameLoop(FcukCancer.INSTANCE) );
 		}
 	}
 }

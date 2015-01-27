@@ -33,11 +33,11 @@ import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.suitecompiletech.fcukcancer.simulation.CancerCell;
-import com.suitecompiletech.fcukcancer.simulation.ControlsHelper;
 import com.suitecompiletech.fcukcancer.simulation.Hero;
 import com.suitecompiletech.fcukcancer.simulation.Missle;
 import com.suitecompiletech.fcukcancer.simulation.Ship;
 import com.suitecompiletech.fcukcancer.simulation.Simulation;
+import com.suitecompiletech.fcukcancer.util.ControlsHelper;
 
 /** The renderer receives a simulation and renders it.
  * @author mzechner */
@@ -47,7 +47,7 @@ public class Renderer {
 	/** the background texture **/
 	private Texture backgroundTexture;
 	/** the font **/
-	private BitmapFont font;
+
 	/** the rotation angle of all invaders around y **/
 	private float invaderAngle = 0;
 	/** status string **/
@@ -63,30 +63,15 @@ public class Renderer {
 	private final Matrix4 normal = new Matrix4();
 	private final Matrix3 normal3 = new Matrix3();
 
-	/** perspective camera **/
-	private PerspectiveCamera camera;
-
-	/** the directional light **/
-	Environment lights;
-
-	ModelBatch modelBatch;
-
-	final Vector3 tmpV = new Vector3();
 
 	public Renderer () {
 		try {
-			lights = new Environment();
-			lights.add(new DirectionalLight().set(Color.WHITE, new Vector3(-1, -0.5f, 0).nor()));
-
+			
 			spriteBatch = new SpriteBatch();
-			modelBatch = new ModelBatch();
 
 			backgroundTexture = new Texture(Gdx.files.internal("data/planet.jpg"), Format.RGB565, true);
 			backgroundTexture.setFilter(TextureFilter.MipMap, TextureFilter.Linear);
 
-			font = new BitmapFont(Gdx.files.internal("data/font10.fnt"), Gdx.files.internal("data/font10.png"), false);
-
-			camera = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -108,13 +93,6 @@ public class Renderer {
 		this.backgroundTexture = backgroundTexture;
 	}
 
-	public BitmapFont getFont() {
-		return font;
-	}
-
-	public void setFont(BitmapFont font) {
-		this.font = font;
-	}
 
 	public float getInvaderAngle() {
 		return invaderAngle;
@@ -156,29 +134,7 @@ public class Renderer {
 		this.lastWave = lastWave;
 	}
 
-	public PerspectiveCamera getCamera() {
-		return camera;
-	}
 
-	public void setCamera(PerspectiveCamera camera) {
-		this.camera = camera;
-	}
-
-	public Environment getLights() {
-		return lights;
-	}
-
-	public void setLights(Environment lights) {
-		this.lights = lights;
-	}
-
-	public ModelBatch getModelBatch() {
-		return modelBatch;
-	}
-
-	public void setModelBatch(ModelBatch modelBatch) {
-		this.modelBatch = modelBatch;
-	}
 
 	public Matrix4 getViewMatrix() {
 		return viewMatrix;
@@ -196,10 +152,6 @@ public class Renderer {
 		return normal3;
 	}
 
-	public Vector3 getTmpV() {
-		return tmpV;
-	}
-
 	public Vector3 getDir() {
 		return dir;
 	}
@@ -213,16 +165,7 @@ public class Renderer {
 		renderBackground();
 		gl.glEnable(GL20.GL_DEPTH_TEST);
 		gl.glEnable(GL20.GL_CULL_FACE);
-		setProjectionAndCamera(simulation.ship);
-
-		modelBatch.begin(camera);
-		modelBatch.render(simulation.explosions);
-		//if (!simulation.ship.isExploding) modelBatch.render(simulation.ship, lights);
-		//modelBatch.render(simulation.invaders, lights);
-		//modelBatch.render(simulation.blocks);
-		//modelBatch.render(simulation.shots);
-		modelBatch.end();
-
+		
 		gl.glDisable(GL20.GL_CULL_FACE);
 		gl.glDisable(GL20.GL_DEPTH_TEST);
 
@@ -255,9 +198,9 @@ public class Renderer {
 		
 		if (Gdx.app.getType() == ApplicationType.Android || Gdx.app.getType() != ApplicationType.iOS) {
 		
-			spriteBatch.draw(simulation.getLeft(), 0, 0, ControlsHelper.leftButtonWidth, ControlsHelper.leftButtonHeight);
-			spriteBatch.draw(simulation.getRight(), Gdx.graphics.getWidth()-ControlsHelper.rightButtonWidth, 0, ControlsHelper.rightButtonWidth, ControlsHelper.rightButtonHeight);
-			Gdx.app.log(this.getClass().getSimpleName(), "Rendercount:" + renderCount);
+			spriteBatch.draw(simulation.left, simulation.left.pos.x, simulation.left.pos.y, simulation.left.width, simulation.left.height);
+			spriteBatch.draw(simulation.right, simulation.right.pos.x, simulation.right.pos.y, simulation.right.width, simulation.right.height);
+			//Gdx.app.log(this.getClass().getSimpleName(), "Rendercount:" + renderCount);
 		}
 		
 		
@@ -284,16 +227,10 @@ public class Renderer {
 
 	final Vector3 dir = new Vector3();
 
-	private void setProjectionAndCamera (Ship ship) {
-		//ship.transform.getTranslation(tmpV);
-		camera.position.set(tmpV.x, 6, 2);
-		camera.direction.set(tmpV.x, 0, -4).sub(camera.position).nor();
-		camera.update();
-	}
-
+	
 	public void dispose () {
+		
 		spriteBatch.dispose();
 		backgroundTexture.dispose();
-		font.dispose();
 	}
 }

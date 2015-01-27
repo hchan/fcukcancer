@@ -21,7 +21,7 @@ import com.suitecompiletech.fcukcancer.FcukCancer;
 public abstract class InvadersScreen implements Screen {
 
 	protected FcukCancer invaders;
-
+	public boolean done = false;
 	public InvadersScreen(FcukCancer invaders) {
 		this.invaders = invaders;
 	}
@@ -32,14 +32,14 @@ public abstract class InvadersScreen implements Screen {
 	/** Called when a screen should render itself */
 	public abstract void draw (float delta);
 
-	/** Called by GdxInvaders to check whether the screen is done.
-	 * @return true when the screen is done, false otherwise */
-	public abstract boolean isDone ();
+	
 
 	@Override
 	public void render (float delta) {
 		update(delta);
-		draw(delta);
+		if (!done) {
+			draw(delta);
+		}
 	}
 
 	@Override

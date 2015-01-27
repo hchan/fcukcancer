@@ -15,6 +15,7 @@ package com.suitecompiletech.fcukcancer.screens;
 
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Files.FileType;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerAdapter;
@@ -40,22 +41,15 @@ public class MainMenu extends InvadersScreen {
 	public final Texture logo;
 	public final Texture start;
 	/** the font **/
-	private final BitmapFont font;
-	/** is done flag **/
-	private boolean isDone = false;
+	//private final BitmapFont font;
+
 	/** view & transform matrix **/
 	private final Matrix4 viewMatrix = new Matrix4();
 	private final Matrix4 transformMatrix = new Matrix4();
 
 	public MainMenu (FcukCancer invaders) {
 		super(invaders);
-		if (FcukCancer.music != null) {
-			FcukCancer.music.stop();
-		}
-		FcukCancer.music = Gdx.audio.newMusic(Gdx.files.getFileHandle("data/inspirational.mp3", FileType.Internal));
-		FcukCancer.music.setVolume(FcukCancer.VOLUME);
-		FcukCancer.music.setLooping(true);
-		FcukCancer.music.play();
+	
 		spriteBatch = new SpriteBatch();
 	//	background = new Texture(Gdx.files.internal("data/planet.jpg"));
 	//	background.setFilter(TextureFilter.Linear, TextureFilter.Linear);
@@ -64,29 +58,29 @@ public class MainMenu extends InvadersScreen {
 		logo.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		start = new Texture(Gdx.files.internal("start.png"));
 
-		font = new BitmapFont(Gdx.files.internal("data/font16.fnt"), Gdx.files.internal("data/font16.png"), false);
+		//font = new BitmapFont(Gdx.files.internal("data/font16.fnt"), Gdx.files.internal("data/font16.png"), false);
 
 		if (invaders.getController() != null) {
 			invaders.getController().addListener(new ControllerAdapter() {
 				@Override
 				public boolean buttonUp(Controller controller, int buttonIndex) {
 					controller.removeListener(this);
-					isDone = true;
 					return false;
 				}
 			});
 		}
 	}
 
-	@Override
-	public boolean isDone () {
-		return isDone;
-	}
+	
+
 
 	@Override
 	public void update (float delta) {
-		if (Gdx.input.justTouched()) {
-			isDone = true;
+		if (Gdx.input.justTouched() || Gdx.input.isKeyPressed(Keys.SPACE)) {
+			done = true;
+			this.dispose();
+			FcukCancer.INSTANCE.setScreen(new GameLoop(FcukCancer.INSTANCE));
+			//isDone = true;
 		}
 	}
 
@@ -124,9 +118,10 @@ public class MainMenu extends InvadersScreen {
 
 	@Override
 	public void dispose () {
+		start.dispose();
 		spriteBatch.dispose();
 		//background.dispose();
 		logo.dispose();
-		font.dispose();
+		//font.dispose();
 	}
 }

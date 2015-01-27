@@ -26,7 +26,10 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Disposable;
+import com.suitecompiletech.fcukcancer.FcukCancer;
 import com.suitecompiletech.fcukcancer.screens.GameLoop;
+import com.suitecompiletech.fcukcancer.screens.YouWin;
+import com.suitecompiletech.fcukcancer.util.ControlsHelper;
 
 public class Simulation implements Disposable {
 	public final static float PLAYFIELD_MIN_X = -14;
@@ -65,8 +68,8 @@ public class Simulation implements Disposable {
 	private final Vector3 tmpV1 = new Vector3();
 	private final Vector3 tmpV2 = new Vector3();
 	private GameLoop gameLoop;
-	private Sprite left;
-	private Sprite right;
+	public ControlsSprite left;
+	public ControlsSprite right;
 	private Missle lastMissle;
 
 	
@@ -218,9 +221,8 @@ public class Simulation implements Disposable {
 	private void populate () {
 		
 			
-			left = ControlsHelper.getLeft();
-			right = ControlsHelper.getRight();
-		
+		left = ControlsHelper.getLeft();
+		right = ControlsHelper.getRight();
 		
 		
 		hero = new Hero(this);
@@ -335,7 +337,15 @@ public class Simulation implements Disposable {
 		checkMissleCollision();
 		//checkBlockCollision();
 		//checkNextLevel();
-		
+		checkYouWin();
+	}
+
+    private void checkYouWin() {
+		if (cancerCells.size() == 0) {
+			gameLoop.done = true;
+			this.dispose();
+			FcukCancer.INSTANCE.setScreen(new YouWin(FcukCancer.INSTANCE));
+		}
 	}
 
 //	private void updateInvaders (float delta) {
@@ -364,7 +374,7 @@ public class Simulation implements Disposable {
 					Rectangle rectCancerCell = new Rectangle(cancerCell.pos.x, cancerCell.pos.y, cancerCell.width, cancerCell.height);
 					if (rectMissle.overlaps(rectCancerCell)) {
 						//Gdx.app.log(this.getClass().getSimpleName(), "missle hit!");
-						GameLoop.explosion.play();
+						gameLoop.explosion.play();
 						collision = true;
 						cancerCellRowIterator.remove();
 						misslesIterator.remove();
@@ -605,6 +615,7 @@ public class Simulation implements Disposable {
 
 	@Override
 	public void dispose () {
+		gameLoop.dispose();
 		shipModel.dispose();
 		invaderModel.dispose();
 		blockModel.dispose();
@@ -613,23 +624,4 @@ public class Simulation implements Disposable {
 	}
 
 	
-
-
-	public Sprite getLeft() {
-		return left;
-	}
-
-	public void setLeft(Sprite left) {
-		this.left = left;
-	}
-
-	public Sprite getRight() {
-		return right;
-	}
-
-	public void setRight(Sprite right) {
-		this.right = right;
-	}
-
-
 }

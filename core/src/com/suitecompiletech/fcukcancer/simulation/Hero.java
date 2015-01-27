@@ -24,7 +24,7 @@ public class Hero {
 		pos.x = (Gdx.graphics.getWidth() - width)/2;
 		
 		
-		Gdx.app.log(this.getClass().getSimpleName(), pos.x + "");
+		//Gdx.app.log(this.getClass().getSimpleName(), pos.x + "");
 		
 		texture = new Texture("cancerHero.png");
 	}
