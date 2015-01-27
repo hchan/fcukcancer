@@ -84,7 +84,7 @@ public class MainMenu extends InvadersScreen {
 	@Override
 	public void draw (float delta) {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		Gdx.gl.glClearColor(0.5f, 0.5f, 0.5f, 1);
+		Gdx.gl.glClearColor(0,0,0, 1);
 		viewMatrix.setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		spriteBatch.setProjectionMatrix(viewMatrix);
 		spriteBatch.setTransformMatrix(transformMatrix);
@@ -93,16 +93,19 @@ public class MainMenu extends InvadersScreen {
 		//spriteBatch.disableBlending();
 		spriteBatch.setColor(Color.WHITE);
 		//spriteBatch.draw(background, 0, 0, 480, 320, 0, 0, 512, 512, false, false);
-		spriteBatch.draw(logo, 0, 0);// 0, 320 - 128, 480, 128, 0, 0, 512, 256, false, false);
+		float logoWidth = (float)Gdx.graphics.getWidth() * 2/3;
+		float logoHeight = logo.getHeight() / logo.getWidth() * logoWidth;
+		spriteBatch.draw(logo, (Gdx.graphics.getWidth() - logoWidth)/2, 
+				(Gdx.graphics.getHeight() - logoHeight)/2, logoWidth, logoHeight);// 0, 320 - 128, 480, 128, 0, 0, 512, 256, false, false);
 		//spriteBatch.setBlendFunction(GL20.GL_ONE, GL20.GL_ONE_MINUS_SRC_ALPHA);
-		String text = "Touch screen to start!";
-		float width = font.getBounds(text).width;
-		font.draw(spriteBatch, text, 240 - width / 2, 128);
-		if (Gdx.app.getType() == ApplicationType.WebGL) {
-			text = "Press Enter for Fullscreen Mode";
-			width = font.getBounds(text).width;
-			font.draw(spriteBatch, "Press Enter for Fullscreen Mode", 240 - width / 2, 128 - font.getLineHeight());
-		}
+		//String text = "Touch screen to start!";
+//		float width = font.getBounds(text).width;
+//		font.draw(spriteBatch, text, 240 - width / 2, 128);
+//		if (Gdx.app.getType() == ApplicationType.WebGL) {
+//			text = "Press Enter for Fullscreen Mode";
+//			width = font.getBounds(text).width;
+//			font.draw(spriteBatch, "Press Enter for Fullscreen Mode", 240 - width / 2, 128 - font.getLineHeight());
+//		}
 		spriteBatch.end();
 	}
 
