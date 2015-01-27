@@ -32,7 +32,7 @@ public class YouWin extends InvadersScreen {
 	/** view & transform matrix **/
 	private final Matrix4 viewMatrix = new Matrix4();
 	private final Music music;
-
+	private float deltaSum = 0;
 	public YouWin (FcukCancer invaders) {
 		super(invaders);
 	
@@ -103,7 +103,8 @@ public class YouWin extends InvadersScreen {
 
 	@Override
 	public void update (float delta) {
-		if (Gdx.input.justTouched() || Gdx.input.isKeyPressed(Keys.SPACE)) {
+		deltaSum += delta;
+		if (deltaSum >= 3 && (Gdx.input.justTouched() || Gdx.input.isKeyPressed(Keys.SPACE))) {
 			done = true;
 			this.dispose();
 			FcukCancer.INSTANCE.setScreen(new GameLoop(FcukCancer.INSTANCE) );

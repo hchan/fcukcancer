@@ -37,8 +37,8 @@ public class Simulation implements Disposable {
 	public final static float PLAYFIELD_MIN_Z = -15;
 	public final static float PLAYFIELD_MAX_Z = 2;
 	public static final float TIME_BETWEEN_MISSLE = 0.75f;
-	public static int MAX_ROW = 1;
-	public static int MAX_COL = 1;
+	public static int MAX_ROW = 3;
+	public static int MAX_COL = 5;
 
 	//public ArrayList<Invader> invaders = new ArrayList<Invader>();
 	//public ArrayList<Block> blocks = new ArrayList<Block>();
