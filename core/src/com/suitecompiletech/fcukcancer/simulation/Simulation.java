@@ -33,9 +33,9 @@ public class Simulation implements Disposable {
 	public final static float PLAYFIELD_MAX_X = 14;
 	public final static float PLAYFIELD_MIN_Z = -15;
 	public final static float PLAYFIELD_MAX_Z = 2;
-	public static final float TIME_BETWEEN_MISSLE = 1.5f;
-	public static final int MAX_ROW = 3;
-	public static final int MAX_COL = 4;
+	public static final float TIME_BETWEEN_MISSLE = 0.75f;
+	public static int MAX_ROW = 1;
+	public static int MAX_COL = 1;
 
 	//public ArrayList<Invader> invaders = new ArrayList<Invader>();
 	//public ArrayList<Block> blocks = new ArrayList<Block>();
@@ -50,7 +50,7 @@ public class Simulation implements Disposable {
 	public Shot shipShot = null;
 	public transient SimulationListener listener;
 	public float multiplier = 1;
-	public int score;
+
 	public int wave = 1;
 
 	public Model shipModel;
@@ -120,13 +120,7 @@ public class Simulation implements Disposable {
 		this.multiplier = multiplier;
 	}
 
-	public int getScore() {
-		return score;
-	}
-
-	public void setScore(int score) {
-		this.score = score;
-	}
+	
 
 	public int getWave() {
 		return wave;
@@ -336,11 +330,12 @@ public class Simulation implements Disposable {
 		//updateInvaders(delta);
 		updateMissles(delta);
 		updateCancerCells(delta);
-		updateExplosions(delta);
+		//updateExplosions(delta);
 		//checkShipCollision();
 		checkMissleCollision();
 		//checkBlockCollision();
 		//checkNextLevel();
+		
 	}
 
 //	private void updateInvaders (float delta) {
@@ -452,17 +447,17 @@ public class Simulation implements Disposable {
 //		}
 	}
 
-	public void updateExplosions (float delta) {
-		removedExplosions.clear();
-		for (int i = 0; i < explosions.size(); i++) {
-			Explosion explosion = explosions.get(i);
-			explosion.update(delta);
-			if (explosion.aliveTime > Explosion.EXPLOSION_LIVE_TIME) removedExplosions.add(explosion);
-		}
-
-		for (int i = 0; i < removedExplosions.size(); i++)
-			explosions.remove(removedExplosions.get(i));
-	}
+//	public void updateExplosions (float delta) {
+//		removedExplosions.clear();
+//		for (int i = 0; i < explosions.size(); i++) {
+//			Explosion explosion = explosions.get(i);
+//			explosion.update(delta);
+//			if (explosion.aliveTime > Explosion.EXPLOSION_LIVE_TIME) removedExplosions.add(explosion);
+//		}
+//
+//		for (int i = 0; i < removedExplosions.size(); i++)
+//			explosions.remove(removedExplosions.get(i));
+//	}
 
 //	private void checkInvaderCollision () {
 //		if (shipShot == null) return;

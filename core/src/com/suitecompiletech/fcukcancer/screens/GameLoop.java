@@ -78,7 +78,7 @@ public class GameLoop extends InvadersScreen implements SimulationListener {
 
 	@Override
 	public boolean isDone () {
-		return simulation.ship.lives == 0;
+		return simulation.cancerCells.size() == 0;
 	}
 
 	@Override

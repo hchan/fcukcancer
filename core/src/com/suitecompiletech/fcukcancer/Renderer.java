@@ -227,6 +227,7 @@ public class Renderer {
 		gl.glDisable(GL20.GL_DEPTH_TEST);
 
 		spriteBatch.setProjectionMatrix(viewMatrix);
+		spriteBatch.enableBlending(); // enables .png transparency
 		spriteBatch.begin();
 		
 		for (Missle missle : simulation.missles) {
@@ -242,12 +243,12 @@ public class Renderer {
 			}	
 		}
 		
-		if (simulation.ship.lives != lastLives || simulation.score != lastScore || simulation.wave != lastWave) {
-			status = "lives: " + simulation.ship.lives + " wave: " + simulation.wave + " score: " + simulation.score;
-			lastLives = simulation.ship.lives;
-			lastScore = simulation.score;
-			lastWave = simulation.wave;
-		}
+//		if (simulation.ship.lives != lastLives || simulation.score != lastScore || simulation.wave != lastWave) {
+//			status = "lives: " + simulation.ship.lives + " wave: " + simulation.wave + " score: " + simulation.score;
+//			lastLives = simulation.ship.lives;
+//			lastScore = simulation.score;
+//			lastWave = simulation.wave;
+//		}
 		//spriteBatch.enableBlending();
 		Hero hero = simulation.getHero();
 		spriteBatch.draw(hero.getTexture(), hero.pos.x, hero.pos.y, hero.width, hero.height);
@@ -260,7 +261,7 @@ public class Renderer {
 		}
 		
 		
-		font.draw(spriteBatch, status, 0, 320);
+		//font.draw(spriteBatch, status, 0, 320);
 		spriteBatch.end();
 
 		invaderAngle += delta * 90;

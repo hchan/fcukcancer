@@ -29,11 +29,13 @@ import com.suitecompiletech.fcukcancer.screens.GameLoop;
 import com.suitecompiletech.fcukcancer.screens.GameOver;
 import com.suitecompiletech.fcukcancer.screens.InvadersScreen;
 import com.suitecompiletech.fcukcancer.screens.MainMenu;
+import com.suitecompiletech.fcukcancer.screens.YouWin;
 
 public class FcukCancer extends Game {
 
+	public static final float VOLUME = 0.2f;
 	/** Music needs to be a class property to prevent being disposed. */
-	private Music music;
+	public static Music music;
 	private FPSLogger fps = new FPSLogger();
 	public static int maxOfHeightWidth;
 	private Controller controller;
@@ -79,7 +81,7 @@ public class FcukCancer extends Game {
 				// if the current screen is a game loop screen we switch to the
 				// game over screen
 				if (currentScreen instanceof GameLoop) {
-					setScreen(new GameOver(this));
+					setScreen(new YouWin(this));
 				} else if (currentScreen instanceof GameOver) {
 					// if the current screen is a game over screen we switch to the
 					// main menu screen
@@ -106,6 +108,7 @@ public class FcukCancer extends Game {
 
 		setScreen(new MainMenu(this));
 		music = Gdx.audio.newMusic(Gdx.files.getFileHandle("data/inspirational.mp3", FileType.Internal));
+		music.setVolume(VOLUME);
 		music.setLooping(true);
 		music.play();
 		Gdx.input.setInputProcessor(new InputAdapter() {
