@@ -104,7 +104,9 @@ public class YouWin extends InvadersScreen {
 	@Override
 	public void update (float delta) {
 		if (Gdx.input.justTouched()) {
-			isDone = true;
+			//isDone = true;
+			this.dispose();
+			FcukCancer.INSTANCE.setScreen(new MainMenu(FcukCancer.INSTANCE) );
 		}
 	}
 }

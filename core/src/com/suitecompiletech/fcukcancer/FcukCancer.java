@@ -32,6 +32,7 @@ import com.suitecompiletech.fcukcancer.screens.MainMenu;
 import com.suitecompiletech.fcukcancer.screens.YouWin;
 
 public class FcukCancer extends Game {
+	public static FcukCancer INSTANCE;
 
 	public static final float VOLUME = 0.2f;
 	/** Music needs to be a class property to prevent being disposed. */
@@ -71,7 +72,7 @@ public class FcukCancer extends Game {
 		// in the screen itself or in a proper state machine.
 		if (currentScreen.isDone()) {
 			// dispose the resources of the current screen
-			currentScreen.dispose();
+			//currentScreen.dispose();
 
 			// if the current screen is a main menu screen we switch to
 			// the game loop
@@ -95,6 +96,7 @@ public class FcukCancer extends Game {
 
 	@Override
 	public void create () {
+		INSTANCE = this;
 		maxOfHeightWidth = Gdx.graphics.getHeight();
 		if (Gdx.graphics.getWidth() > maxOfHeightWidth) {
 			maxOfHeightWidth = Gdx.graphics.getWidth();
@@ -107,10 +109,7 @@ public class FcukCancer extends Game {
 		Controllers.addListener(controllerListener);
 
 		setScreen(new MainMenu(this));
-		music = Gdx.audio.newMusic(Gdx.files.getFileHandle("data/inspirational.mp3", FileType.Internal));
-		music.setVolume(VOLUME);
-		music.setLooping(true);
-		music.play();
+		
 		Gdx.input.setInputProcessor(new InputAdapter() {
 			@Override
 			public boolean keyUp (int keycode) {

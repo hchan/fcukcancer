@@ -14,6 +14,7 @@
 package com.suitecompiletech.fcukcancer.screens;
 
 import com.badlogic.gdx.Application.ApplicationType;
+import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerAdapter;
@@ -36,7 +37,8 @@ public class MainMenu extends InvadersScreen {
 	/** the background texture **/
 	//private final Texture background;
 	/** the logo texture **/
-	private final Texture logo;
+	public final Texture logo;
+	public final Texture start;
 	/** the font **/
 	private final BitmapFont font;
 	/** is done flag **/
@@ -47,13 +49,20 @@ public class MainMenu extends InvadersScreen {
 
 	public MainMenu (FcukCancer invaders) {
 		super(invaders);
-
+		if (FcukCancer.music != null) {
+			FcukCancer.music.stop();
+		}
+		FcukCancer.music = Gdx.audio.newMusic(Gdx.files.getFileHandle("data/inspirational.mp3", FileType.Internal));
+		FcukCancer.music.setVolume(FcukCancer.VOLUME);
+		FcukCancer.music.setLooping(true);
+		FcukCancer.music.play();
 		spriteBatch = new SpriteBatch();
 	//	background = new Texture(Gdx.files.internal("data/planet.jpg"));
 	//	background.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
 		logo = new Texture(Gdx.files.internal("fcukCancer.png"));
 		logo.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		start = new Texture(Gdx.files.internal("start.png"));
 
 		font = new BitmapFont(Gdx.files.internal("data/font16.fnt"), Gdx.files.internal("data/font16.png"), false);
 
@@ -97,6 +106,10 @@ public class MainMenu extends InvadersScreen {
 		float logoHeight = logo.getHeight() / logo.getWidth() * logoWidth;
 		spriteBatch.draw(logo, (Gdx.graphics.getWidth() - logoWidth)/2, 
 				(Gdx.graphics.getHeight() - logoHeight)/2, logoWidth, logoHeight);// 0, 320 - 128, 480, 128, 0, 0, 512, 256, false, false);
+		float startWidth = (float)Gdx.graphics.getWidth() / 8;
+		float startHeight = startWidth;
+		spriteBatch.draw(start, (Gdx.graphics.getWidth() - startWidth)/2, 
+				1, startWidth, startHeight);
 		//spriteBatch.setBlendFunction(GL20.GL_ONE, GL20.GL_ONE_MINUS_SRC_ALPHA);
 		//String text = "Touch screen to start!";
 //		float width = font.getBounds(text).width;
