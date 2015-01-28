@@ -12,28 +12,18 @@ import com.suitecompiletech.fcukcancer.screens.YouWin;
 import com.suitecompiletech.fcukcancer.util.ControlsHelper;
 
 public class Simulation implements Disposable {
-	public final static float PLAYFIELD_MIN_X = -14;
-	public final static float PLAYFIELD_MAX_X = 14;
-	public final static float PLAYFIELD_MIN_Z = -15;
-	public final static float PLAYFIELD_MAX_Z = 2;
 	public static final float TIME_BETWEEN_MISSLE = 0.75f;
 	public static int MAX_ROW = 3;
 	public static int MAX_COL = 5;
 
 	public ArrayList<ArrayList<CancerCell>> cancerCells = new ArrayList<ArrayList<CancerCell>>();
 	public ArrayList<Missle> missles = new ArrayList<Missle>();
-	public ArrayList<Explosion> explosions = new ArrayList<Explosion>();
-	
 	public Hero hero;
 	
-	public Ship ship;
-	public Shot shipShot = null;
 	public transient SimulationListener listener;
 	public float multiplier = 1;
 
 
-	//public ArrayList<Missle> removedMissles = new ArrayList<Missle>();
-	private ArrayList<Explosion> removedExplosions = new ArrayList<Explosion>();
 
 	private GameLoop gameLoop;
 	public ControlsSprite left;
@@ -43,14 +33,6 @@ public class Simulation implements Disposable {
 	
 	
 
-	public ArrayList<Explosion> getExplosions() {
-		return explosions;
-	}
-
-	public void setExplosions(ArrayList<Explosion> explosions) {
-		this.explosions = explosions;
-	}
-
 	public Hero getHero() {
 		return hero;
 	}
@@ -59,21 +41,6 @@ public class Simulation implements Disposable {
 		this.hero = hero;
 	}
 
-	public Ship getShip() {
-		return ship;
-	}
-
-	public void setShip(Ship ship) {
-		this.ship = ship;
-	}
-
-	public Shot getShipShot() {
-		return shipShot;
-	}
-
-	public void setShipShot(Shot shipShot) {
-		this.shipShot = shipShot;
-	}
 
 	public SimulationListener getListener() {
 		return listener;
@@ -92,30 +59,6 @@ public class Simulation implements Disposable {
 	}
 
 	
-	public ArrayList<Explosion> getRemovedExplosions() {
-		return removedExplosions;
-	}
-
-	public void setRemovedExplosions(ArrayList<Explosion> removedExplosions) {
-		this.removedExplosions = removedExplosions;
-	}
-
-	public static float getPlayfieldMinX() {
-		return PLAYFIELD_MIN_X;
-	}
-
-	public static float getPlayfieldMaxX() {
-		return PLAYFIELD_MAX_X;
-	}
-
-	public static float getPlayfieldMinZ() {
-		return PLAYFIELD_MIN_Z;
-	}
-
-	public static float getPlayfieldMaxZ() {
-		return PLAYFIELD_MAX_Z;
-	}
-
 
 	public Simulation (GameLoop gameLoop) {
 		this.gameLoop = gameLoop;
