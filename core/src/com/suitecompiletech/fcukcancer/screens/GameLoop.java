@@ -45,12 +45,12 @@ public class GameLoop extends InvadersScreen implements SimulationListener {
 	public GameLoop (FcukCancer invaders) {
 		super(invaders);
 		
-		music = Gdx.audio.newMusic(Gdx.files.getFileHandle("data/inspirational.mp3", FileType.Internal));
+		music = Gdx.audio.newMusic(Gdx.files.getFileHandle("inspirational.mp3", FileType.Internal));
 		music.setVolume(FcukCancer.VOLUME);
 		music.setLooping(true);
 		music.play();
 	
-		explosion = Gdx.audio.newSound(Gdx.files.internal("data/explosion.wav"));
+		explosion = Gdx.audio.newSound(Gdx.files.internal("explosion.wav"));
 		renderer = new Renderer();
 		simulation = new Simulation(this);
 		simulation.listener = this;

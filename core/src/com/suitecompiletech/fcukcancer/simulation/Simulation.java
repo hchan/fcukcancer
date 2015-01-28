@@ -13,8 +13,8 @@ import com.suitecompiletech.fcukcancer.util.ControlsHelper;
 
 public class Simulation implements Disposable {
 	public static final float TIME_BETWEEN_MISSLE = 0.75f;
-	public static int MAX_ROW = 3;
-	public static int MAX_COL = 5;
+	public static int MAX_ROW = 1;
+	public static int MAX_COL = 1;
 
 	public ArrayList<ArrayList<CancerCell>> cancerCells = new ArrayList<ArrayList<CancerCell>>();
 	public ArrayList<Missle> missles = new ArrayList<Missle>();
