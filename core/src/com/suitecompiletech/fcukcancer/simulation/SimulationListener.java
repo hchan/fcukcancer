@@ -16,5 +16,4 @@ package com.suitecompiletech.fcukcancer.simulation;
 public interface SimulationListener {
 	public void explosion ();
 
-	public void shot ();
 }

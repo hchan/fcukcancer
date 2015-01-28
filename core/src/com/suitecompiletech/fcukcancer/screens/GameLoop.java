@@ -2,22 +2,19 @@
 
 package com.suitecompiletech.fcukcancer.screens;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Files.FileType;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerAdapter;
 import com.badlogic.gdx.controllers.ControllerListener;
-import com.badlogic.gdx.controllers.mappings.Ouya;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.utils.TimeUtils;
 import com.suitecompiletech.fcukcancer.FcukCancer;
 import com.suitecompiletech.fcukcancer.Renderer;
 import com.suitecompiletech.fcukcancer.simulation.Simulation;
 import com.suitecompiletech.fcukcancer.simulation.SimulationListener;
-import com.suitecompiletech.fcukcancer.util.SimpleDirectionGestureDetector;
 
 public class GameLoop extends InvadersScreen implements SimulationListener {
 	/** the simulation **/
@@ -26,8 +23,6 @@ public class GameLoop extends InvadersScreen implements SimulationListener {
 	private final Renderer renderer;
 	/** explosion sound **/
 	public final Sound explosion;
-	/** shot sound **/
-	private final Sound shot;
 	
 	private final Music music;
 
@@ -56,7 +51,6 @@ public class GameLoop extends InvadersScreen implements SimulationListener {
 		music.play();
 	
 		explosion = Gdx.audio.newSound(Gdx.files.internal("data/explosion.wav"));
-		shot = Gdx.audio.newSound(Gdx.files.internal("data/shot.wav"));
 		renderer = new Renderer();
 		simulation = new Simulation(this);
 		simulation.listener = this;
@@ -147,10 +141,6 @@ public class GameLoop extends InvadersScreen implements SimulationListener {
 		explosion.play();
 	}
 
-	@Override
-	public void shot () {
-		shot.play();
-	}
 
 	public int getButtonsPressed() {
 		return buttonsPressed;
@@ -180,9 +170,6 @@ public class GameLoop extends InvadersScreen implements SimulationListener {
 		return explosion;
 	}
 
-	public Sound getShot() {
-		return shot;
-	}
 	
 	
 }
