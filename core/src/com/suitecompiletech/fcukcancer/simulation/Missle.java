@@ -3,7 +3,6 @@ package com.suitecompiletech.fcukcancer.simulation;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.suitecompiletech.fcukcancer.FcukCancer;
@@ -27,7 +26,7 @@ public class Missle {
 		width = FcukCancer.maxOfHeightWidth/HEIGHT_WIDTH_DIVISOR_TO_SCREEN/2;
 		height = FcukCancer.maxOfHeightWidth/HEIGHT_WIDTH_DIVISOR_TO_SCREEN;
 		pos.y = simulation.getHero().height;
-		pos.x = simulation.getHero().pos.x;
+		pos.x = simulation.getHero().pos.x + (simulation.getHero().width-width)/2;
 		
 		
 		//Gdx.app.log(this.getClass().getSimpleName(), pos.x + "");
